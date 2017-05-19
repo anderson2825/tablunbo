@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+ 
+  <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+  <style type="text/css">
+  *{padding: 0; margin: 0;}
+li{list-style: none;}
+#un_slider{position: relative;width:506px; height: 204px; margin: 100px; overflow: hidden;}
+.my_slider{width:100%; height: 204px;position: absolute}
+.my_slider ul{height: 204px;width: 506px;}
+.my_slider ul li{width: 506px; height:100%; position: absolute; display:none;}
+.my_slider ul li.actived{display:block;}
+.my_slider .next{left:506px;display: block;}
+.my_slider .last{left:-506px;display: block;}
+.my_slider ol{width:160px; position: absolute; bottom: 10px; left: 50%; margin-left: -80px;}
+.my_slider ol li{width: 20px; height: 20px; cursor: pointer; border-radius: 50%; background-color:#f60; float: left; margin-left: 10px;}
+.my_slider ol li:hover{background-color:red;}
+#un_slider .dots li{width: 20px; height: 20px; background-color:#ff0; border-radius:50%; margin-left: 15px; float: left;}
+#un_slider .dots li.actived{background-color: #f00;}
+.unslider {  overflow: auto;   margin: 0;  padding: 0;}
+.unslider-arrow {display: block;  width: 32px;  height: 32px; position: absolute; cursor:pointer;  top: 50%; margin-top: -16px;  overflow: hidden;  background: rgba(0,0,0,.2) no-repeat 50% 50%;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAQCAQAAABuQZ3IAAAAi0lEQVR4AU3OISBEQQBAwS0AACS9NxqQgCZpkiYBVddFvWhAAUABAPQCAGC4g/0vTnrBqCfDIZl70J+kMUBPpEwT4FNXxBxz4F1HxHyr4EVTxBLb4EFNxEon4CJSlVNw9AcV9sC16h8osgke1P1ArgXwouVvdQq86ww/GQefusNf7kBviBlxpT8k+gL/Wox4r1d4MwAAAABJRU5ErkJggg==');
+   background-size: 7px 11px;   border-radius: 32px;  text-indent: -999em;   opacity: .6; transition: opacity .2s;
+  }
+.unslider-arrow:hover {  opacity: 1;  }
+ .unslider-arrow.leftBtn{left: -50px;right: auto;-ms-transform: rotate(-180deg); transform: rotate(-180deg);}
+.unslider-arrow.rightBtn { left: auto;  right: 20px;}
+.unslider-arrow.leftBtn { right: auto;left:20px;}
+
+ </style>
+</head>
+<body>
+   <div id='un_slider' class="unslider-wrap">
+	  <div class="my_slider">
+       <ul>
+       	<li><img src="images/ban1.jpg" alt=""></li>
+       	<li><img src="images/ban2.jpg" alt=""></li>
+       	<li><img src="images/ban3.jpg" alt=""></li>
+       	<li><img src="images/ban4.jpg" alt=""></li>
+       	<li><img src="images/ban5.jpg" alt=""></li>
+       </ul>
+   </div>
+    <a class="unslider-arrow rightBtn"></a>
+    <a class="unslider-arrow leftBtn"></a>
+	  </div>
+    <script  type="text/javascript" >
+         $(function(){
+           var unSilder=$('#un_slider'),
+               mySlider=unSilder.find('.my_slider'),
+               sliderLi=mySlider.find('li'),
+               sliderLiW=sliderLi.eq(0).width();
+               sliderLiLen=sliderLi.length,
+               sliderRig=unSilder.find('.rightBtn'),
+               sliderLef=unSilder.find('.leftBtn'),
+               clcikState=true,
+               timer=null,
+               current=0,
+               unOl='<ol class="dots"></ol>';
+               unSilder.append(unOl);
+               for(var i=0;i<sliderLiLen;i++){
+                   $('<li></li>').appendTo('.dots');
+                };
+                sliderLi.eq(0).addClass('actived')
+              var olli=$('.dots li'),
+                 olilen=olli.length,
+                 oliW=olli.outerWidth(true);
+                 $('.dots').width(oliW*olilen);
+                 $('.dots').css({
+                      position: 'absolute',
+                      cursor:'pointer',
+                      bottom:20,
+                      left:(unSilder.width()- $('.dots').width())/2
+                   });
+                  olli.eq(0).addClass("actived");
+                sliderRig.click(function(e){
+                     e.stopPropagation(); 
+                     var index=current+1;
+                    olli.removeClass('actived');  
+                     if(current==sliderLiLen-1){
+                           sliderLi.eq(0).addClass('next');
+                            olli.removeClass('actived').eq(0).addClass('actived')
+                         }
+                         else{
+                           sliderLi.eq(index).addClass('next');
+                         }
+                        olli.eq(index).addClass('actived');
+                         mySlider.stop(false).animate({'left':-sliderLiW},800,function(){
+                            sliderLi.eq(current).removeClass('actived');
+                            if(index==sliderLiLen){
+                               sliderLi.eq(0).addClass('actived').removeClass('next');
+                             }
+                             else{
+                               sliderLi.eq(index).addClass('actived').removeClass('next');
+                            }
+                            mySlider.css('left',0);
+                               current=index%sliderLiLen;
+                               
+                        })
+
+                });
+
+                 sliderLef.click(function(e){
+                     e.stopPropagation(); 
+                      var index=current-1;
+                       if(index==0){
+                            sliderLi.eq(sliderLiLen-1).addClass('last');
+                           }
+                        else{
+                           sliderLi.eq(index).addClass('last');
+                           }
+                         olli.removeClass('actived');
+                         olli.eq(current).addClass('actived');
+                         mySlider.stop(false).animate({'left':sliderLiW},800,function(){
+                            sliderLi.removeClass('actived last');
+                            sliderLi.eq(current).addClass("actived");
+                            mySlider.css('left',0);
+                               current=index%sliderLiLen;
+                         })
+
+                });
+
+           })
+    </script>
+<!-- <script>
+  $(function(){
+     var un_slider=$('#un_slider'),
+         un_sliderW=un_slider.width(),
+         timer,
+         current=0,
+         un_ul=un_slider.find('ul'),
+         un_li=un_ul.children('li'),
+         un_lilen=un_li.length,
+         un_ol='<ol class="dots"></ol>';
+         un_slider.append(un_ol);
+           for(var i=0;i<un_li.length;i++ ){
+                  $('<li></li>').appendTo('.dots');
+                 };
+          var  olli=$('.dots li'),
+               olilen=olli.length,
+               oliW=olli.outerWidth(true);
+                $('.dots').width(oliW*olilen);
+                $('.dots').css({
+                      position: 'absolute',
+                      cursor:'pointer',
+                      bottom:20,
+                      left:(un_sliderW- $('.dots').width())/2
+                   });
+             
+                 var setupcss=function(){
+                     un_ul.css({position:'relative',width:un_lilen*100 +'%' });
+                     un_li.css('width',100/un_lilen +'%');
+                     olli.eq(0).addClass('actived')
+                  };
+                   setupcss();
+                  var un_ulanimate=function(t){
+                     un_ul.stop(true,false).animate({'left':"-"+(t*100)+'%'},500);   
+                  }
+
+                var  autoplay=function(){
+                  timer=setInterval(function(){
+                  if(!un_ul.is(':animated')){
+                      if(current<un_lilen-1){
+                       current++;
+                      un_ulanimate(current);
+                      }else{
+                        current=0;
+                        un_ulanimate(current);
+                       }
+                     };
+                  olli.eq(current).addClass('actived').siblings().removeClass('actived');
+                 },3000); };
+                  autoplay();
+
+                 olli.click(function(){
+                    var index=$(this).index();
+                     current=index; 
+                     $(this).addClass('actived').siblings().removeClass('actived');  
+                      un_ulanimate(current);
+                     return  false;
+                  })  
+                $('.next').click(function(){
+                     if(!un_ul.is(':animated')){
+                      if(current<un_lilen-1){
+                       current++;
+                        un_ulanimate(current);
+                      }else{
+                        current=0;
+                         un_ulanimate(current);
+                       }
+                     };
+                  olli.eq(current).addClass('actived').siblings().removeClass('actived');
+                   return false;
+                 })
+                $('.prev').click(function(){
+                     if(!un_ul.is(':animated')){
+                     if(current==0){
+                        current=un_lilen-1;
+                         un_ulanimate(current);
+                      }else if(current<=un_lilen-1){
+                           current--;  
+                        un_ulanimate(current); 
+                      } 
+                     };
+                   olli.eq(current).addClass('actived').siblings().removeClass('actived');
+                   return false;
+                 });
+                un_slider.hover(function(){
+                    clearInterval(timer);
+                },function(){
+                 autoplay();
+                });  
+           });
+   
+ </script>-->
+ </body> 
+</html>
