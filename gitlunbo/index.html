@@ -4,7 +4,6 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title></title>
- 
   <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
   <style type="text/css">
   *{padding: 0; margin: 0;}
@@ -24,7 +23,7 @@ li{list-style: none;}
    background-size: 7px 11px;   border-radius: 32px;  text-indent: -999em;   opacity: .6; transition: opacity .2s;
   }
 .unslider-arrow:hover {  opacity: 1;  }
- .unslider-arrow.prev{left: -50px;right: auto;-ms-transform: rotate(-180deg); transform: rotate(-180deg);}
+.unslider-arrow.prev {left: -50px;right: auto;-ms-transform: rotate(-180deg); transform: rotate(-180deg);}
 .unslider-arrow.next { left: auto;  right: 20px;}
 .unslider-arrow.prev { right: auto;left:20px;}
  </style>
@@ -40,10 +39,11 @@ li{list-style: none;}
        	<li><img src="images/ban5.jpg" alt=""></li>
        </ul>
    </div>
-    <a class="unslider-arrow next"><font><font>下一页</font></font></a>
-    <a class="unslider-arrow prev"><font><font>上一页</font></font></a>
+    <a class="unslider-arrow next"></a>
+    <a class="unslider-arrow prev"></a>
 	  </div>
 <script>
+/*以判断整个ul的长度为轮播*/
   $(function(){
      var un_slider=$('#un_slider'),
          un_sliderW=un_slider.width(),
@@ -52,7 +52,7 @@ li{list-style: none;}
          un_ul=un_slider.find('ul'),
          un_li=un_ul.children('li'),
          un_lilen=un_li.length,
-         un_ol='<ol class="dots"></ol>';
+         un_ol='<ol class="dots"></ol>';  /*新增点击小圆点*/
          un_slider.append(un_ol);
            for(var i=0;i<un_li.length;i++ ){
                   $('<li></li>').appendTo('.dots');
@@ -61,7 +61,7 @@ li{list-style: none;}
                olilen=olli.length,
                oliW=olli.outerWidth(true);
                 $('.dots').width(oliW*olilen);
-                $('.dots').css({
+                $('.dots').css({                  /*小圆点位置*/
                       position: 'absolute',
                       cursor:'pointer',
                       bottom:20,
@@ -69,65 +69,58 @@ li{list-style: none;}
                    });
              
                  var setupcss=function(){
-                     un_ul.css({position:'relative',width:un_lilen*100 +'%' });
-                     un_li.css('width',100/un_lilen +'%');
-                     olli.eq(0).addClass('actived')
+                     un_ul.css({position:'relative',width:un_lilen*100 +'%' });   /*设置ul的宽度*/
+                     un_li.css('width',100/un_lilen +'%');  /*设置ul li的宽度*/
+                     olli.eq(0).addClass('actived')         /*第一个小圆点默认显示*/
                   };
                    setupcss();
-                  var un_ulanimate=function(t){
+                  var un_ulanimate=function(t){                /*整个图片滚动时的动画效果*/   
                      un_ul.stop(true,false).animate({'left':"-"+(t*100)+'%'},500);   
                   }
-
-                var  autoplay=function(){
-                  timer=setInterval(function(){
-                  if(!un_ul.is(':animated')){
-                      if(current<un_lilen-1){
+                 var autoNext=function(){               /*向右滚动函数*/
+                      if(!un_ul.is(':animated')){
+                      if(current<un_lilen-1){        /*索引值小于整个图片的个数，索引加1*/
                        current++;
                       un_ulanimate(current);
-                      }else{
+                      }else{                       /*索引值等于整个图片的个数，索引==0*/
                         current=0;
                         un_ulanimate(current);
                        }
                      };
                   olli.eq(current).addClass('actived').siblings().removeClass('actived');
+                 }
+                var  autoplay=function(){             /*自动滚动函数*/
+                  timer=setInterval(function(){
+                    autoNext();
                  },3000); };
                   autoplay();
-
-                 olli.click(function(){
-                    var index=$(this).index();
+                  olli.click(function(e){
+                      e.stopPropagation();          /*阻止冒泡*/
+                    var index=$(this).index();    /*当前索引值*/
                      current=index; 
                      $(this).addClass('actived').siblings().removeClass('actived');  
                       un_ulanimate(current);
-                     return  false;
-                  })  
-                $('.next').click(function(){
+                     })  
+                  $('.next').click(function(e){      /*向右滚动*/
+                      e.stopPropagation(); 
+                     autoNext();
+                   })
+ 
+                   $('.prev').click(function(e){       /*向左滚动*/
+                      e.stopPropagation(); 
                      if(!un_ul.is(':animated')){
-                      if(current<un_lilen-1){
-                       current++;
-                        un_ulanimate(current);
-                      }else{
-                        current=0;
-                         un_ulanimate(current);
-                       }
-                     };
-                  olli.eq(current).addClass('actived').siblings().removeClass('actived');
-                   return false;
-                 })
-
-                  $('.prev').click(function(){
-                     if(!un_ul.is(':animated')){
-                     if(current==0){
+                     if(current==0){              /*索引为0的时候,等于当前的图片个数总值*/
                         current=un_lilen-1;
                          un_ulanimate(current);
-                      }else if(current<=un_lilen-1){
+                      }else if(current<=un_lilen-1){      /*索引<图片个数总值,索引自减 */
                            current--;  
                         un_ulanimate(current); 
                       } 
                      };
                    olli.eq(current).addClass('actived').siblings().removeClass('actived');
-                   return false;
+                    
                  });
-                un_slider.hover(function(){
+                un_slider.hover(function(){     /*鼠标经过时停止自动滚动，鼠标离开时自动滚动*/    
                     clearInterval(timer);
                 },function(){
                  autoplay();
@@ -135,8 +128,5 @@ li{list-style: none;}
            });
    
 </script>
-	  
-
-
-</body>
+ </body>
 </html>
